@@ -1,0 +1,25 @@
+{
+	"name": "clevis/rest-api-base",
+	"description": "Base components for JSON REST API for Nette applications",
+	"homepage": "http://clevis.cz",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Clevis s.r.o.",
+			"homepage": "http://clevis.cz"
+		}
+	],
+
+	"require": {
+		"php": ">= 5.3.7",
+		"justinrainbow/json-schema": "1.4.*@dev"
+	},
+	"require-dev": {
+		"nette/tester": "@dev",
+		"nette/nette": "@dev"
+	},
+
+	"autoload": {
+		"classmap": ["src/"]
+	}
+}

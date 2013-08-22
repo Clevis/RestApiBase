@@ -74,8 +74,8 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	/** @var \StdClass data požadavku dekódovaná z JSONu */
 	protected $data;
 
-	/** @var \StdClass vracená data */
-	protected $payload;
+	/** @var array vracená data */
+	protected $payload = array();
 
 	/** @var IApiUser */
 	protected $user;
@@ -116,7 +116,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 			$this->checkApiVersion();
 
 			$name = $this->request->presenterName;
-			$action = $this->request->parameters['action'];
+			$action = isset($this->request->parameters['action']) ? $this->request->parameters['action'] : 'default';
 
 			// kontrola dat
 			if ($request->isMethod('post') || $request->isMethod('put') && $request->isMethod('patch'))
@@ -354,7 +354,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		if ($data !== NULL)
 		{
-			$this->payload->data = $data;
+			$this->payload['data'] = $data;
 		}
 
 		$this->filterData($this->payload);

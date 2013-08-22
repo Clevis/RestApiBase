@@ -282,7 +282,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		foreach ($files as $file)
 		{
 			if (!file_exists($file)) continue;
-			if ($validator->check($data, __DIR__ . '/../schemas/' . $files)) return;
+			if ($validator->check($data, $file)) return;
 			$validated = TRUE;
 		}
 		if (!$validated)
@@ -309,7 +309,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	protected function formatSchemaFiles($presenter, $action)
 	{
 		$ref = new ClassType($this);
-		$path = dirname($ref->fileName);
+		$path = str_replace('presenters', 'schemas', dirname($ref->fileName));
 		return array(
 			$path . '/'. str_replace(':', '/', $presenter) . '/' . $action . '.json'
 		);

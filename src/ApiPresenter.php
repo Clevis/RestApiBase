@@ -33,8 +33,8 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	/** @var Container */
 	protected $context;
 
-	/** @var IApiAuthorizator */
-	protected $authorizator;
+	/** @var IApiAuthenticator */
+	protected $authenticator;
 
 	/** @var IApiLogger */
 	protected $logger;
@@ -193,11 +193,11 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	protected function checkAccess()
 	{
 		$apiKey = $this->getHeader('X-Api-Key');
-		if (!$this->authorizator)
+		if (!$this->authenticator)
 		{
-			throw new Nette\InvalidStateException('ApiPresenter: API authorizator is not set, but $checkAccess is on.');
+			throw new Nette\InvalidStateException('ApiPresenter: API authenticator is not set, but $checkAccess is on.');
 		}
-		$this->user = $this->authorizator->authorize($apiKey, $this->data);
+		$this->user = $this->authenticator->authenticate($apiKey, $this->data);
 		if ($this->user === NULL)
 		{
 			$this->sendErrorResponse(ApiResponse::S401_UNAUTHORIZED, 'Authorization failed.');
@@ -212,9 +212,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	 */
 	protected function despatch(Request $request, $action)
 	{
-		d($action);
 		$method = 'action' . $action;
-		d($method);
 		if (!method_exists($this, $method))
 		{
 			$this->sendErrorResponse(ApiResponse::S405_METHOD_NOT_ALLOWED, 'Method ' . strtoupper($request->method) . ' is not allowed.');
@@ -440,9 +438,9 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		return $this->httpRequest->getHeader($name);
 	}
 
-	public function setAuthorizator(IApiAuthorizator $authorizator)
+	public function setAuthenticator(IApiAuthenticator $authenticator)
 	{
-		$this->authorizator = $authorizator;
+		$this->authenticator = $authenticator;
 	}
 
 	public function setLogger(IApiLogger $logger)

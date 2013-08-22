@@ -71,7 +71,7 @@ $presenter->injectPrimary(
 	$httpResponse
 );
 // set failing authorizator
-$presenter->setAuthorizator(new DummyFailAuthorisator);
+$presenter->setAuthenticator(new DummyFailAuthenticator);
 
 // -> fails on authorization
 $response = $presenter->run($request);
@@ -80,7 +80,7 @@ Assert::same(401, $response->getResponseCode());
 
 
 // set success authorizator
-$presenter->setAuthorizator(new DummySuccessAuthorisator);
+$presenter->setAuthenticator(new DummySuccessAuthenticator);
 
 // -> fails on method
 $response = $presenter->run($request);

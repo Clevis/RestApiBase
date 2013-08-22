@@ -50,10 +50,10 @@ class DummyUser implements \Clevis\RestApi\IApiUser
 }
 
 
-class DummySuccessAuthorisator implements \Clevis\RestApi\IApiAuthorizator
+class DummySuccessAuthenticator implements \Clevis\RestApi\IApiAuthenticator
 {
 
-	public function authorize($apiKey, $requestData)
+	public function authenticate($apiKey, $requestData)
 	{
 		return new DummyUser;
 	}
@@ -61,10 +61,10 @@ class DummySuccessAuthorisator implements \Clevis\RestApi\IApiAuthorizator
 }
 
 
-class DummyFailAuthorisator implements \Clevis\RestApi\IApiAuthorizator
+class DummyFailAuthenticator implements \Clevis\RestApi\IApiAuthenticator
 {
 
-	public function authorize($apiKey, $requestData)
+	public function authenticate($apiKey, $requestData)
 	{
 		return NULL;
 	}

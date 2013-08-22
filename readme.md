@@ -18,8 +18,8 @@ namespace: `Clevis\RestApi`
 ####JsonSchemaValidator
 - validating request data. uses *justinrainbow/json-schema*
 
-####*IApiAuthorizator*
-- interface for API authorisation
+####*IApiAuthenticator*
+- interface for API authentication
 
 ####*IApiUser*
 - interface of user entity for API

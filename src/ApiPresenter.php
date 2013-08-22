@@ -424,7 +424,11 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	 */
 	protected function logRequest(Request $request)
 	{
-		$this->logger->logRequest($this->httpRequest, $this->httpResponse, $request, $this->response, $this->user);
+		$this->logger->logRequest(
+			$this->httpRequest, $this->httpResponse,
+			$request, $this->response,
+			$this->rawPostData,
+			$this->user);
 	}
 
 	/**

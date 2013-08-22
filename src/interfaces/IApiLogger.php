@@ -16,12 +16,14 @@ interface IApiLogger
 	 * @param Http\Response
 	 * @param Application\Request
 	 * @param Application\IResponse
+	 * @param string
 	 * @param IApiUser|NULL
 	 * @return void
 	 */
 	function logRequest(
 		Http\Request $httpRequest, Http\Response $httpResponse,
-		Application\Request $request, Application\IResponse $response,
+		Application\Request $request, ApiResponse $response,
+		$requestBody,
 		IApiUser $user = NULL);
 
 }

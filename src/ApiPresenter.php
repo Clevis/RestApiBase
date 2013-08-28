@@ -5,7 +5,6 @@ namespace Clevis\RestApi;
 use Nette;
 use Nette\Http;
 use Nette\Application\Request;
-use Nette\Application\Responses\JsonResponse;
 use Nette\Application\Routers\Route;
 use Nette\Reflection\ClassType;
 use Nette\DI\Container;
@@ -65,7 +64,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	/** @var Request */
 	protected $request;
 
-	/** @var JsonResponse */
+	/** @var ApiResponse */
 	protected $response;
 
 	/** @var string nedekódovaná POST data */
@@ -250,7 +249,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		// parsování POST dat
 		try
 		{
-			$post = Json::decode($this->rawPostData);
+			$postData = Json::decode($this->rawPostData);
 		}
 		catch (JsonException $e)
 		{
@@ -259,9 +258,9 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		}
 
 		// validace podle JSON schématu
-		$this->validateSchema($post, $schema);
+		$this->validateSchema($postData, $schema);
 
-		$this->data = $post->data;
+		$this->data = $postData;
 	}
 
 	/**
@@ -354,7 +353,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		if ($data !== NULL)
 		{
-			$this->payload['data'] = $data;
+			$this->payload = $data;
 		}
 
 		$this->filterData($this->payload);

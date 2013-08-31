@@ -118,7 +118,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 			$action = isset($this->request->parameters['action']) ? $this->request->parameters['action'] : 'default';
 
 			// kontrola dat
-			if ($request->isMethod('post') || $request->isMethod('put') && $request->isMethod('patch'))
+			if ($request->isMethod('post') || $request->isMethod('put') || $request->isMethod('patch'))
 			{
 				$this->getRawPostData();
 				$this->prepareData($name, $action);

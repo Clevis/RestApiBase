@@ -29,6 +29,15 @@ use Nette\Utils\JsonException;
 abstract class ApiPresenter implements Nette\Application\IPresenter
 {
 
+	const MESSAGE_SSL_IS_REQUIRED = 'SSL is required.';
+	const MESSAGE_MINIMAL_SUPPORTED_API_VERSION = 'Minimal supported API version is %s.';
+	const MESSAGE_MAXIMAL_SUPPORTED_API_VERSION = 'Maximal supported API version is %s.';
+	const MESSAGE_AUTHORIZATION_FAILED = 'Authorization failed.';
+	const MESSAGE_METHOD_IS_NOT_ALLOWED = 'Method %s is not allowed.';
+	const MESSAGE_INVALID_JSON_DATA = 'Invalid JSON data.';
+	const MESSAGE_INVALID_PARAMETER = 'Invalid parameter `%s`: \'%s\'.';
+	const MESSAGE_MISSING_PARAMETER = 'Missing parameter `%s`.';
+
 	/** @var Container */
 	protected $context;
 
@@ -167,7 +176,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		if (!$this->request->hasFlag(Request::SECURED))
 		{
-			$this->sendErrorResponse(ApiResponse::S403_FORBIDDEN, 'SSL is required.');
+			$this->sendErrorResponse(ApiResponse::S403_FORBIDDEN, static::MESSAGE_SSL_IS_REQUIRED);
 		}
 	}
 
@@ -178,11 +187,11 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		if (isset($this->minApiVersion) && $this->getHeader('X-Api-Version') < $this->minApiVersion)
 		{
-			$this->sendErrorResponse(ApiResponse::S426_UPGRADE_REQUIRED, "Minimal supported API version is $this->minApiVersion.");
+			$this->sendErrorResponse(ApiResponse::S426_UPGRADE_REQUIRED, sprintf(static::MESSAGE_MINIMAL_SUPPORTED_API_VERSION, $this->minApiVersion));
 		}
 		if (isset($this->maxApiVersion) && $this->getHeader('X-Api-Version') > $this->maxApiVersion)
 		{
-			$this->sendErrorResponse(ApiResponse::S426_UPGRADE_REQUIRED, "Maximal supported API version is $this->maxApiVersion.");
+			$this->sendErrorResponse(ApiResponse::S426_UPGRADE_REQUIRED, sprintf(static::MESSAGE_MAXIMAL_SUPPORTED_API_VERSION, $this->maxApiVersion));
 		}
 	}
 
@@ -199,7 +208,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		$this->user = $this->authenticator->authenticate($apiKey, $this->data);
 		if ($this->user === NULL)
 		{
-			$this->sendErrorResponse(ApiResponse::S401_UNAUTHORIZED, 'Authorization failed.');
+			$this->sendErrorResponse(ApiResponse::S401_UNAUTHORIZED, static::MESSAGE_AUTHORIZATION_FAILED);
 		}
 	}
 
@@ -214,7 +223,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		$method = 'action' . $action;
 		if (!method_exists($this, $method))
 		{
-			$this->sendErrorResponse(ApiResponse::S405_METHOD_NOT_ALLOWED, 'Method ' . strtoupper($request->method) . ' is not allowed.');
+			$this->sendErrorResponse(ApiResponse::S405_METHOD_NOT_ALLOWED, sprintf(static::MESSAGE_METHOD_IS_NOT_ALLOWED, strtoupper($request->method)));
 		}
 		call_user_func_array(array($this, $method), $request->parameters);
 	}
@@ -253,7 +262,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		}
 		catch (JsonException $e)
 		{
-			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, "Invalid JSON data.");
+			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, static::MESSAGE_INVALID_JSON_DATA);
 			exit; // IDE shut up
 		}
 
@@ -298,7 +307,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 		}
 		else
 		{
-			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, "Invalid parameter `" . $errors[0]['property'] . "`: '" . $errors[0]['message'] . "'.");
+			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, sprintf(static::MESSAGE_INVALID_PARAMETER, $errors[0]['property'], $errors[0]['message']));
 		}
 	}
 
@@ -324,7 +333,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		if (!$value)
 		{
-			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, "Missing parameter `" .  $name . "`.");
+			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, sprintf(static::MESSAGE_MISSING_PARAMETER, $name));
 		}
 	}
 
@@ -339,7 +348,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		if (!$condition)
 		{
-			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, "Invalid parameter `" . $param . "`'." . ($reason ? ' ' . $reason : ''));
+			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, sprintf(static::MESSAGE_INVALID_PARAMETER, $param, $reason));
 		}
 	}
 

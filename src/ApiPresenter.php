@@ -237,7 +237,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	}
 
 	/**
-	 * Parsuje data rekvestu
+	 * Parsuje a validuje data rekvestu
 	 *
 	 * @param string
 	 */
@@ -255,22 +255,33 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 			$schema = $this->formatSchemaFiles($presenter, $action);
 		}
 
-		// parsování POST dat
-		try
-		{
-			$postData = Json::decode($this->rawPostData);
-		}
-		catch (JsonException $e)
-		{
-			$this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, static::MESSAGE_INVALID_JSON_DATA);
-			exit; // IDE shut up
-		}
+		$data = $this->parseData($this->rawPostData);
 
 		// validace podle JSON schématu
-		$this->validateSchema($postData, $schema);
+		$this->validateSchema($data, $schema);
 
-		$this->data = $postData;
+		$this->data = $data;
 	}
+
+    /**
+     * Parsuje POST data
+     * Překryjte pro jiný formát dat (např. XML)
+     *
+     * @param string
+     * @return array|\StdClass
+     */
+    protected function parseData($data)
+    {
+        try
+        {
+            return Json::decode($data);
+        }
+        catch (JsonException $e)
+        {
+            $this->sendErrorResponse(ApiResponse::S400_BAD_REQUEST, static::MESSAGE_INVALID_JSON_DATA);
+            exit; // IDE shut up
+        }
+    }
 
 	/**
 	 * Validuje tělo požadavku oproti JSON schématu

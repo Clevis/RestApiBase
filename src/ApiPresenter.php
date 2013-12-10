@@ -136,7 +136,7 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 			// kontrola přístupu
 			if ($this->checkAccess)
 			{
-				$this->checkAccess();
+				$this->checkAccess($action);
 			}
 
 			$this->despatch($request, $action);
@@ -197,8 +197,10 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 
 	/**
 	 * Kontroluje přístup
+	 *
+	 * @param string
 	 */
-	protected function checkAccess()
+	protected function checkAccess($action)
 	{
 		$apiKey = $this->getHeader('X-Api-Key');
 		if (!$this->authenticator)

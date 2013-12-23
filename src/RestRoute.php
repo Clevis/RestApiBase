@@ -19,7 +19,8 @@ class RestRoute extends Route
 		METHOD_PATCH = 32,
 		METHOD_DELETE = 64,
 		METHODS_ALL = 124,
-		RESTFUL = 128;
+		RESTFUL = 128,
+		METHOD_OPTIONS = 256;
 
 
 	protected static $restDictionary = array(
@@ -27,7 +28,7 @@ class RestRoute extends Route
 		'POST' => 'append', // appends a new item in the list of resources "POST me/articles"
 		'PUT' => 'create', // creates or replaces a resource "PUT /me/articles/1"
 		'PATCH' => 'update', // partialy modifies a resource "PATCH /me/artices/1"
-		'DELETE' => 'delete', // deletes a resource "DEELTE /me/articles/1"
+		'DELETE' => 'delete', // deletes a resource "DELETE /me/articles/1"
 	);
 
 
@@ -47,7 +48,7 @@ class RestRoute extends Route
 
 		$method = $httpRequest->getMethod();
 
-		if (!in_array($method, array('GET', 'POST', 'PUT', 'PATCH', 'DELETE')))
+		if (!in_array($method, array('GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS')))
 		{
 			return NULL;
 		}
@@ -84,6 +85,11 @@ class RestRoute extends Route
 		}
 
 		if (($this->flags & self::METHOD_PATCH) === self::METHOD_PATCH && $method !== 'PATCH')
+		{
+			return NULL;
+		}
+
+		if (($this->flags & self::METHOD_OPTIONS) === self::METHOD_OPTIONS && $method !== 'OPTIONS')
 		{
 			return NULL;
 		}

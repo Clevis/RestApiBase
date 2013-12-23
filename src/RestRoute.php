@@ -53,7 +53,7 @@ class RestRoute extends Route
 			return NULL;
 		}
 
-		if (!($this->flags & self::METHODS_ALL))
+		if ($this->flags & self::RESTFUL)
 		{
 			$action = self::$restDictionary[$method];
 

@@ -331,6 +331,8 @@ abstract class ApiPresenter implements Nette\Application\IPresenter
 	{
 		$ref = new ClassType($this);
 		$path = str_replace('presenters', 'schemas', dirname($ref->fileName));
+		$presenter = explode(':', $presenter);
+		$presenter = end($presenter);
 		return array(
 			$path . '/'. str_replace(':', '/', $presenter) . '/' . $action . '.json'
 		);
